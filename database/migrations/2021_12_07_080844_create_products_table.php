@@ -22,7 +22,7 @@ class CreateProductsTable extends Migration
             $table->string('Category');
             $table->double('Quantity');
             $table->double('Price');
-            //$table->dateTime('Expiry_Date');
+            $table->dateTime('Expiry_Date');
             $table->string('Phone_Number');
             //$table->integer('views');
             $table->timestamps();
