@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class JWTController extends Controller
 {
@@ -17,29 +18,36 @@ class JWTController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:2|max:100',
             'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
+            'password' => 'required|string|confirmed|min:8',
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ]);
+
+        try {
+            $token = auth()->attempt($validator->validated());
+        } catch (ValidationException $e) {
+        }
 
         return response()->json([
             'message' => 'User successfully registered',
-            'user' => $user
+            'user' => $user,
+            'access token'=>$token
         ], 201);
     }
 
@@ -51,8 +59,8 @@ class JWTController extends Controller
     public function login()
     {
         $credentials = request(['email', 'password']);
-
-        if (! $token = auth()->attempt($credentials)) {
+        $token=auth()->attempt($credentials);
+        if (!$token) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -82,7 +90,7 @@ class JWTController extends Controller
     }
 
     /**
-    coc     * Refresh a token.
+     * coc     * Refresh a token.
      *
      * @return JsonResponse
      */
@@ -94,7 +102,7 @@ class JWTController extends Controller
     /**
      * Get the token array structure.
      *
-     * @param  string $token
+     * @param string $token
      *
      * @return JsonResponse
      */
