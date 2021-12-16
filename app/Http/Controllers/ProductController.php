@@ -42,10 +42,10 @@ class ProductController extends Controller
         $product = Product::create([
             'name' => $request->name,
             'photo_name'=>$filename,
-            'photo_path'=>URL::to("/images/$filename"),
+            'photo_path'=>URL::to("/photos/$filename"),
             'category'=>$request->category,
             'quantity'=>$request->quantity,
-            'price'=>$request->price,//m/d/Y g:i A
+            'price'=>$request->price,
             'expiry_date'=>Carbon::createFromFormat('F/j/Y', $request->expiry_date)->format('Y-m-d'),
             'phone_number'=>$request->phone_number,
             'user_id'=>auth()->id(),
