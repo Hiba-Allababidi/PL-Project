@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-//use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
@@ -23,18 +22,17 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:2|max:20',
             'image' => 'required|image',
-            'category'=>'required|string|min:3|max:10',
+            'category_id'=>'required|integer',
             'quantity'=>'required|regex:/^[0-9]+(\.[0-9][0-9]?)?$/|min:1',
             'price'=>'required|regex:/^[0-9]+(\.[0-9][0-9]?)?$/',
-            'expiry_date'=>'required|date_format:F/j/Y',
-            'phone_number'=>'required|string|min:10'
+            'expiry_date'=>'required|date',
+            'phone_number'=>'required|string|min:10',
+            'discount1'=>'required|integer',
+            'discount2'=>'required|integer'
         ]);
-
         if($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
-
-
         $image = $request->file('image');
         $extension = $image->getClientOriginalExtension();
         $filename = time().'.'.$extension;
@@ -43,19 +41,34 @@ class ProductController extends Controller
             'name' => $request->name,
             'photo_name'=>$filename,
             'photo_path'=>URL::to("/photos/$filename"),
-            'category'=>$request->category,
+            'category_id'=>$request->category_id,
             'quantity'=>$request->quantity,
             'price'=>$request->price,
-            'expiry_date'=>Carbon::createFromFormat('F/j/Y', $request->expiry_date)->format('Y-m-d'),
+            'expiry_date'=>$request->expiry_date,
             'phone_number'=>$request->phone_number,
+            'discount1'=>$request->discount1,
+            'discount2'=>$request->discount2,
             'user_id'=>auth()->id(),
             'views'=>0
         ]);
-
         return response()->json([
             'message' => 'Product successfully added',
             'Product' => $product,
         ], 201);
-
     }
+
+    public function show_products(){
+
+        $data= DB::table('products')->get(['id','name','photo_path']);
+        return response()->json($data);
+    }
+
+    public function delete_product($id){
+        DB::table('products')->delete($id);
+        return response()->json([
+           'message'=>'product deleted'
+        ]);
+    }
+
+
 }
