@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->string('name');
             $table->string('photo_name');
             $table->string('photo_path');
-            $table->string('category_id');
+            $table->string('category');
             $table->double('quantity');
             $table->double('price');
             $table->date('expiry_date')->always();

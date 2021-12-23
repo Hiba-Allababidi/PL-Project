@@ -22,7 +22,7 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:2|max:20',
             'image' => 'required|image',
-            'category_id'=>'required|integer',
+            'category'=>'required|string',
             'quantity'=>'required|regex:/^[0-9]+(\.[0-9][0-9]?)?$/|min:1',
             'price'=>'required|regex:/^[0-9]+(\.[0-9][0-9]?)?$/',
             'expiry_date'=>'required|date',
@@ -41,7 +41,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'photo_name'=>$filename,
             'photo_path'=>URL::to("/photos/$filename"),
-            'category_id'=>$request->category_id,
+            'category'=>$request->category,
             'quantity'=>$request->quantity,
             'price'=>$request->price,
             'expiry_date'=>$request->expiry_date,
@@ -70,5 +70,25 @@ class ProductController extends Controller
         ]);
     }
 
+    public function show_product($id){
+        //$data=DB::table('products')->where('category','=','fruit')->get();
+        $views=DB::table('products')->where('id',$id)->get(['views'])->pluck('views');
+        $v=$views[0];
+        $v++;
+        $views=DB::table('products')->where('id',$id)->update(['views'=>$v]);
+        $data=DB::table('products')->find($id);
+        return response()->json($data);
+    }
 
+    public function search_product(Request $request){
+
+        $validator=Validator::make($request->all(),[
+            'name'=>'string',
+            'category'=>'string',
+            'expiry_date'=>'date'
+        ]);
+        if($validator->fails()){
+            return response()->json($validator->errors(),404);
+        }
+    }
 }

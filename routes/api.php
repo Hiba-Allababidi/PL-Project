@@ -16,6 +16,7 @@ Route::group(['middleware' => 'api'], function ($router) {
     Route::delete('/delete_product/{id}',[ProductController::class,'delete_product']);
     Route::get('/show_product/{id}',[ProductController::class,'show_product']);
     Route::put('/update_product/{id}',[ProductController::class,'update_product']);
+    Route::get('/search',[ProductController::class,'search_product']);
 
 });
 
