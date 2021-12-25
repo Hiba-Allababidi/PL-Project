@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -28,7 +30,6 @@ class JWTController extends Controller
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|confirmed|min:8',
         ]);
-
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
         }
@@ -38,16 +39,14 @@ class JWTController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
         try {
             $token = auth()->attempt($validator->validated());
         } catch (ValidationException $e) {
         }
-
         return response()->json([
             'message' => 'User successfully registered',
             'user' => $user,
-            'access token'=>$token
+            'access token' => $token
         ], 201);
     }
 
@@ -59,7 +58,7 @@ class JWTController extends Controller
     public function login()
     {
         $credentials = request(['email', 'password']);
-        $token=auth()->attempt($credentials);
+        $token = auth()->attempt($credentials);
         if (!$token) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
@@ -72,10 +71,18 @@ class JWTController extends Controller
      *
      * @return JsonResponse
      */
-    public function me()
+
+
+    public function profile()
     {
-        return response()->json(auth()->user());
+        $name = DB::table('users')->where('id', auth()->id())->get(['name']);
+        //$name=User::find(auth()->id())->get(['name']);
+
+        $user = auth()->user();
+        $data = Product::whereBelongsTo($user)->get(['id','name','photo_path']);
+        return response()->json([$name, $data]);
     }
+
 
     /**
      * Log the user out (Invalidate the token).

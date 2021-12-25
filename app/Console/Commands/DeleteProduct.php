@@ -41,11 +41,6 @@ class DeleteProduct extends Command
 
         DB::table('products')->where('expiry_date','<=',now())->delete();
 
-//        $product=Product::all();
-//
-//        foreach($product as $item) {
-//            $item->
-//        }
         return 0;
     }
 }

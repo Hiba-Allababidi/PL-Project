@@ -8,8 +8,10 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+
 /**
  * @method static create(array $array)
+ *
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -62,7 +64,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
 
-    public function product(){
-        return $this->hasMany('Product','user_id','id');
+    public function products(){
+        return $this->hasMany(Product::class,'user_id','id');
     }
 }

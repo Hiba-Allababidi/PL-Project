@@ -14,19 +14,15 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id','name', 'photo_name','photo_path', 'category', 'quantity','expiry_date', 'price', 'phone_number','discount1','discount2','views'
+        'user_id', 'name', 'photo_name', 'photo_path', 'category', 'quantity', 'expiry_date', 'price', 'phone_number', 'discount2','discount3', 'views','likes'
     ];
 
 
     public function user()
     {
-        return $this->belongsTo('User', 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-//    public function category()
-//    {
-//        return $this->belongsTo('Category', 'category_id', 'id');
-//    }
 }
 
 

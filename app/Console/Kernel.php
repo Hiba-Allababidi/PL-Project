@@ -23,14 +23,8 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
-
         $schedule->command('product:delete')
             ->everyMinute();
-
-
-//        $schedule->call(function () {
-//            DB::table('products')->whereRaw('expiry_date','<=', (array)now())->delete();
-//        })->dailyAt('23:28');
     }
 
     /**

@@ -24,9 +24,10 @@ class CreateProductsTable extends Migration
             $table->double('price');
             $table->date('expiry_date')->always();
             $table->string('phone_number');
-            $table->integer('discount1');
             $table->integer('discount2');
+            $table->integer('discount3');
             $table->integer('views');
+            $table->integer('likes');
             $table->timestamps();
         });
     }
